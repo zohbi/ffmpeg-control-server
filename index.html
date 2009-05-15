@@ -1,0 +1,170 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+	<title>zohbi/ffmpeg-control-server @ GitHub</title>
+	
+	<style type="text/css">
+		body {
+  		margin-top: 1.0em;
+  		background-color: #621fd5;
+		  font-family: "helvetica"; 
+  		color: #ffffff;
+    }
+    #container {
+      margin: 0 auto;
+      width: 700px;
+    }
+		h1 { font-size: 3.8em; color: #9de02a; margin-bottom: 3px; }
+		h1 .small { font-size: 0.4em; }
+		h1 a { text-decoration: none }
+		h2 { font-size: 1.5em; color: #9de02a; }
+    h3 { text-align: center; color: #9de02a; }
+    a { color: #9de02a; }
+    .description { font-size: 1.2em; margin-bottom: 30px; margin-top: 30px; font-style: italic;}
+    .download { float: right; }
+		pre { background: #000; color: #fff; padding: 15px;}
+    hr { border: 0; width: 80%; border-bottom: 1px solid #aaa}
+    .footer { text-align:center; padding-top:30px; font-style: italic; }
+	</style>
+	
+</head>
+
+<body>
+  <a href="http://github.com/zohbi/ffmpeg-control-server"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub" /></a>
+  
+  <div id="container">
+
+    <div class="download">
+      <a href="http://github.com/zohbi/ffmpeg-control-server/zipball/master">
+        <img border="0" width="90" src="http://github.com/images/modules/download/zip.png"></a>
+      <a href="http://github.com/zohbi/ffmpeg-control-server/tarball/master">
+        <img border="0" width="90" src="http://github.com/images/modules/download/tar.png"></a>
+    </div>
+      
+    <h1><a href="http://github.com/zohbi/ffmpeg-control-server">ffmpeg-control-server</a> 
+      <span class="small">by <a href="http://github.com/zohbi">zohbi</a></span></h1>
+
+    <div class="description">
+      This is the server code that launch a ffmpeg command, with parameters taken from the other program client (ffmpeg-control-client)
+    </div>
+
+    <p>#!/usr/bin/env python
+import subprocess
+import signal
+import gobject
+import dbus
+import dbus.service
+import dbus.mainloop.glib
+import os
+
+service = "ch.cett.misse.ffmpeg"
+a=0
+class FFMpeg(dbus.service.Object):
+    @dbus.service.method(service, in_signature='', out_signature='i')
+    def start(self):
+        print "Should start ffmpeg"
+	s='ffmpeg -f video4linux2 -s '+ str(self.width)+'x'+str(self.height)+' -r '+ str(self.imrate) +' -i  /dev/video0 -vcodec mjpeg  -f avi out.avi'
+        p =subprocess.Popen(s, shell=True,stdout=subprocess.PIPE)
+        a=p.pid
+        return 0
+
+    @dbus.service.method(service, in_signature='', out_signature='i')
+    def stop(self):
+        print "Should stop ffmpeg"
+        os.kill(a, signal.SIGTERM)
+        return 0
+
+    @dbus.service.method(service, in_signature='ii', out_signature='i')
+    def image_size_set(self, width, height):
+        print "image_size_set: width=%d height=%d"%(width, height)
+	self.width = width
+	self.height = height
+        return 0
+
+    @dbus.service.method(service, in_signature='', out_signature='ii')
+    def image_size_get(self):
+        print "image_size_get:"
+	return (self.width, self.height)
+
+
+    @dbus.service.method(service, in_signature='i', out_signature='i')
+    def image_rate_set(self,imrate):
+        print "image_rate_set: %d"%imrate
+	self.imrate=imrate
+	return 0
+
+    @dbus.service.method(service, in_signature='', out_signature='i')
+    def image_rate_get(self):
+        print "image_rate_get:"
+	return (self.imrate)
+
+    @dbus.service.method(service, in_signature='i', out_signature='i')
+    def bit_rate_set(self,bitrate):
+        print "bit_rate_set: %d"%bitrate
+	self.bitrate=bitrate
+	return 0
+
+
+
+    @dbus.service.method(service, in_signature='', out_signature='i')
+    def bit_rate_get(self):
+        print "Bit_rate_get:"
+	return (self.bitrate)
+
+  
+
+    @dbus.service.method(service, in_signature='s', out_signature='i')
+    def client_ip_set(self,clip):
+        print "client_ip_set:"
+        self.clip=clip
+	return 0
+
+
+    @dbus.service.method(service, in_signature='', out_signature='s')
+    def client_ip_get(self):
+        print "client_ip_get:"
+	return (self.clip)
+
+
+
+if __name__ == '__main__':
+    dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
+    bus = dbus.SessionBus()
+    name = dbus.service.BusName(service, bus)
+    object = FFMpeg(bus, '/')
+    mainloop = gobject.MainLoop()
+    mainloop.run()
+</p><h2>Dependencies</h2>
+<p>This program receive the prarmeter from the other code ffmpeg-control-client</p>
+<h2>Install</h2>
+<p>like any code</p>
+<h2>Authors</h2>
+<p>Anas EL ZOUEBI</p>
+<h2>Contact</h2>
+<p> (anas.lbn@gmail.com)<br/>      </p>
+
+
+    <h2>Download</h2>
+    <p>
+      You can download this project in either
+      <a href="http://github.com/zohbi/ffmpeg-control-server/zipball/master">zip</a> or
+      <a href="http://github.com/zohbi/ffmpeg-control-server/tarball/master">tar</a> formats.
+    </p>
+    <p>You can also clone the project with <a href="http://git-scm.com">Git</a>
+      by running:
+      <pre>$ git clone git://github.com/zohbi/ffmpeg-control-server</pre>
+    </p>
+      
+    <div class="footer">
+      get the source code on GitHub : <a href="http://github.com/zohbi/ffmpeg-control-server">zohbi/ffmpeg-control-server</a>
+    </div>
+    
+  </div>
+
+  
+</body>
+</html>
