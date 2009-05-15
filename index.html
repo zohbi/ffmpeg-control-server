@@ -53,6 +53,7 @@
     </div>
 
     <p>#!/usr/bin/env python
+#!/usr/bin/env python
 import subprocess
 import signal
 import gobject
@@ -62,20 +63,19 @@ import dbus.mainloop.glib
 import os
 
 service = "ch.cett.misse.ffmpeg"
-a=0
+
 class FFMpeg(dbus.service.Object):
     @dbus.service.method(service, in_signature='', out_signature='i')
     def start(self):
         print "Should start ffmpeg"
 	s='ffmpeg -f video4linux2 -s '+ str(self.width)+'x'+str(self.height)+' -r '+ str(self.imrate) +' -i  /dev/video0 -vcodec mjpeg  -f avi out.avi'
-        p =subprocess.Popen(s, shell=True,stdout=subprocess.PIPE)
-        a=p.pid
+        self.p =subprocess.Popen(s, shell=True,stdout=subprocess.PIPE)
         return 0
 
     @dbus.service.method(service, in_signature='', out_signature='i')
     def stop(self):
         print "Should stop ffmpeg"
-        os.kill(a, signal.SIGTERM)
+        os.kill(self.p.pid, signal.SIGTERM)
         return 0
 
     @dbus.service.method(service, in_signature='ii', out_signature='i')
@@ -138,6 +138,7 @@ if __name__ == '__main__':
     object = FFMpeg(bus, '/')
     mainloop = gobject.MainLoop()
     mainloop.run()
+
 </p><h2>Dependencies</h2>
 <p>This program receive the prarmeter from the other code ffmpeg-control-client</p>
 <h2>Install</h2>
@@ -145,7 +146,8 @@ if __name__ == '__main__':
 <h2>Authors</h2>
 <p>Anas EL ZOUEBI</p>
 <h2>Contact</h2>
-<p> (anas.lbn@gmail.com)<br/>      </p>
+<p> (anas.lbn@gmail.com)
+<br/>      </p>
 
 
     <h2>Download</h2>
